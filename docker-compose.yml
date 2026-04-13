@@ -1,0 +1,45 @@
+# ─── VERSION ───────────────────────────────────────────────────────
+version: '3.8'
+# Which version of docker-compose syntax to use
+# 3.8 is stable and widely supported
+
+# ─── SERVICES ──────────────────────────────────────────────────────
+# Services = containers you want to run
+# You can define multiple services here
+# e.g. your tests + a database + a mock API server
+services:
+
+  # ─── SERVICE 1: Your Playwright Tests ──────────────────────────
+  playwright-tests:
+    # name of this service (can be anything)
+
+    build: .
+    # Build a Docker image using the Dockerfile in current folder (.)
+    # docker-compose will run: docker build -t playwright-tests .
+
+    # ─── VOLUMES ───────────────────────────────────────────────
+    volumes:
+      - ./playwright-report:/app/playwright-report
+      # Maps your LOCAL folder → CONTAINER folder
+      # Format: local_path:container_path
+      #
+      # When container writes report to /app/playwright-report
+      # it actually writes to your local ./playwright-report
+      # So you can view the report on your machine after tests run!
+
+      - ./test-results:/app/test-results
+      # Same for test results, screenshots, videos
+
+      # ─── ENVIRONMENT VARIABLES ─────────────────────────────────
+    environment:
+      - BASE_URL=https://www.saucedemo.com
+      - STANDARD_USER=standard_user
+      - PASSWORD=secret_sauce
+      - CI=true
+      # These override .env file inside the container
+      # In production you'd use a .env file or secrets manager
+
+      # ─── COMMAND ───────────────────────────────────────────────
+    command: npx playwright test --project=chromium
+    # Overrides the CMD in Dockerfile
+    # Runs just chromium tests when using docker-compose
