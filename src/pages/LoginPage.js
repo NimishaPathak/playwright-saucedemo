@@ -1,6 +1,11 @@
+/**
+ * @typedef {import('@playwright/test').Page} Page
+ * @typedef {import('@playwright/test').Locator} Locator
+ */
 import { BasePage } from './BasePage.js';
 
 export class LoginPage extends BasePage {
+    /** @param {Page} page */
     constructor(page) {
         super(page);
     }
@@ -66,4 +71,4 @@ export class LoginPage extends BasePage {
     async clearPassword() {
         await this.getPasswordInput().clear();
     }
-}
+}

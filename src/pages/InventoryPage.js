@@ -1,15 +1,22 @@
-// src/pages/InventoryPage.js
+/**
+ * @typedef {import('@playwright/test').Page} Page
+ * @typedef {import('@playwright/test').Locator} Locator
+ */
 import { BasePage } from './BasePage.js';
 
 export class InventoryPage extends BasePage {
+    /** @param {Page} page */
     constructor(page) {
         super(page);
+    }
+
+    getPageTitle() {
+        return this.getByRoleLocator('heading', { name: /products/i });
     }
 
     getProductList() {
         return this.getByCss('.inventory_list');
     }
-
     getProductItems() {
         return this.getByCss('.inventory_item');
     }
@@ -17,19 +24,21 @@ export class InventoryPage extends BasePage {
     getProductNames() {
         return this.getByCss('.inventory_item_name');
     }
-
     getProductPrices() {
         return this.getByCss('.inventory_item_price');
     }
 
+    getProductDescriptions() {
+        return this.getByCss('.inventory_item_desc');
+    }
+
     getSortDropdown() {
-        return this.getByDataTest('product_sort_container');
+        return this.getByDataTest('product-sort-container');
     }
 
     getCartIcon() {
-        return this.page.getByRole('link', { name: /shopping cart/i });
+        return this.getByRoleLocator('link', { name: /shopping cart/i });
     }
-
     getCartBadge() {
         return this.getByCss('.shopping_cart_badge');
     }
@@ -37,7 +46,6 @@ export class InventoryPage extends BasePage {
     getAddToCartButtons() {
         return this.page.locator('[data-test^="add-to-cart"]');
     }
-
     getRemoveButtons() {
         return this.page.locator('[data-test^="remove"]');
     }
@@ -46,21 +54,34 @@ export class InventoryPage extends BasePage {
         const slug = productName.toLowerCase().replace(/ /g, '-');
         return this.getByDataTest(`add-to-cart-${slug}`);
     }
-    getBurgerMenuButton() {
-        return this.page.getByRole('button', { name: /open menu/i });
+    getRemoveButtonByName(productName) {
+        const slug = productName.toLowerCase().replace(/ /g, '-');
+        return this.getByDataTest(`remove-${slug}`);
+    }
+    getProductLinkByName(productName) {
+        return this.getByRoleLocator('link', { name: productName });
     }
 
+    getBurgerMenuButton() {
+        return this.getByRoleLocator('button', { name: /open menu/i });
+    }
     getLogoutLink() {
-        return this.page.getByRole('link', { name: /logout/i });
+        return this.getByRoleLocator('link', { name: /logout/i });
     }
 
     getAboutLink() {
-        return this.page.getByRole('link', { name: /about/i });
+        return this.getByRoleLocator('link', { name: /about/i });
     }
 
-    getPageTitle() {
-        return this.page.getByRole('heading', { name: /products/i });
+    getResetAppLink() {
+        return this.getByRoleLocator('link', { name: /reset app state/i });
     }
+
+    getCloseSidebarButton() {
+        return this.getByRoleLocator('button', { name: /close menu/i });
+    }
+
+    // PAGE STATE CHECKS
 
     async isOnInventoryPage() {
         return await this.isLocatorVisible(this.getProductList());
@@ -70,32 +91,12 @@ export class InventoryPage extends BasePage {
         return await this.getProductItems().count();
     }
 
-    async addItemToCartByIndex(index = 0) {
-        await this.getAddToCartButtons().nth(index).click();
-    }
-
-    async addItemToCartByName(productName) {
-        await this.clickLocator(this.getAddToCartButtonByName(productName));
-    }
-
-    async addAllItemsToCart() {
-        const count = await this.getAddToCartButtons().count();
-        for (let i = 0; i < count; i++) {
-            await this.getAddToCartButtons().first().click();
-        }
-    }
-
     async getCartCount() {
         const badge = this.getCartBadge();
         if (await badge.isVisible()) {
             return parseInt(await badge.textContent());
         }
         return 0;
-    }
-
-    async sortBy(option) {
-        // options: 'az' | 'za' | 'lohi' | 'hilo'
-        await this.getSortDropdown().selectOption(option);
     }
 
     async getAllProductNames() {
@@ -107,13 +108,73 @@ export class InventoryPage extends BasePage {
         return rawPrices.map(p => parseFloat(p.replace('$', '')));
     }
 
+    async getAllProductDescriptions() {
+        return await this.getProductDescriptions().allTextContents();
+    }
+
+    // SORT ACTIONS
+
+    async sortBy(option) {
+        // option values: 'az' | 'za' | 'lohi' | 'hilo'
+        await this.getSortDropdown().selectOption(option);
+    }
+
+    async getSelectedSortOption() {
+        return await this.getSortDropdown().inputValue();
+    }
+
+    // CART ACTIONS
+
+    async addItemToCartByIndex(index = 0) {
+        await this.getAddToCartButtons().nth(index).click();
+    }
+
+    async addItemToCartByName(productName) {
+        await this.clickLocator(this.getAddToCartButtonByName(productName));
+    }
+
+    async removeItemFromCartByName(productName) {
+        await this.clickLocator(this.getRemoveButtonByName(productName));
+    }
+
+    async addAllItemsToCart() {
+        const count = await this.getAddToCartButtons().count();
+        for (let i = 0; i < count; i++) {
+            // Always click first() because after clicking,
+            // "Add to cart" becomes "Remove" — list shrinks
+            await this.getAddToCartButtons().first().click();
+        }
+    }
+
     async goToCart() {
         await this.clickLocator(this.getCartIcon());
     }
 
-    async logout() {
+    // PRODUCT ACTIONS
+
+    async clickProductByName(productName) {
+        await this.clickLocator(this.getProductLinkByName(productName));
+    }
+
+    // BURGER MENU ACTIONS
+
+    async openBurgerMenu() {
         await this.clickLocator(this.getBurgerMenuButton());
         await this.waitForLocator(this.getLogoutLink());
+    }
+
+    async closeBurgerMenu() {
+        await this.clickLocator(this.getCloseSidebarButton());
+    }
+
+    async logout() {
+        await this.openBurgerMenu();
         await this.clickLocator(this.getLogoutLink());
+    }
+
+    async resetAppState() {
+        await this.openBurgerMenu();
+        await this.clickLocator(this.getResetAppLink());
+        await this.closeBurgerMenu();
     }
 }

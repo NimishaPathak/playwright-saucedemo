@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "checkJs": true,
+        "strict": false,
+        "baseUrl": ".",
+        "paths": {
+            "@pages/*": [
+                "src/pages/*"
+            ],
+            "@utils/*": [
+                "src/utils/*"
+            ],
+            "@fixtures/*": [
+                "src/fixtures/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*.js",
+        "tests/**/*.js",
+        "playwright.config.js"
+    ],
+    "exclude": [
+        "node_modules",
+        "playwright-report",
+        "allure-report",
+        "allure-results",
+        "test-results"
+    ]
+}

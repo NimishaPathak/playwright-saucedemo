@@ -37,3 +37,21 @@ export const expectedErrors = {
     emptyUser: 'Epic sadface: Username is required',
     emptyPass: 'Epic sadface: Password is required',
 };
+
+export const products = {
+    backpack: 'Sauce Labs Backpack',
+    bikeLight: 'Sauce Labs Bike Light',
+    boltShirt: 'Sauce Labs Bolt T-Shirt',
+    fleeceJacket: 'Sauce Labs Fleece Jacket',
+    onesie: 'Sauce Labs Onesie',
+    redShirt: 'Test.allTheThings() T-Shirt (Red)',
+};
+
+export const productPrices = {
+    backpack: 29.99,
+    bikeLight: 9.99,
+    boltShirt: 15.99,
+    fleeceJacket: 49.99,
+    onesie: 7.99,
+    redShirt: 15.99,
+};

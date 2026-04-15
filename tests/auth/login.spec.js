@@ -1,15 +1,16 @@
-// tests/auth/login.spec.js
+
 import { test, expect } from '@playwright/test';
 import * as allure from 'allure-js-commons';
 import { LoginPage } from '../../src/pages/LoginPage.js';
 import { InventoryPage } from '../../src/pages/InventoryPage.js';
 import { users, expectedErrors } from '../../src/utils/testData.js';
 
+/** @type {LoginPage} */ let loginPage;
+/** @type {InventoryPage} */ let inventoryPage;
+
 test.describe('Authentication Tests', () => {
-
-    let loginPage;
-    let inventoryPage;
-
+    test.use({ storageState: { cookies: [], origins: [] } });
+    
     test.beforeEach(async ({ page }) => {
         loginPage = new LoginPage(page);
         inventoryPage = new InventoryPage(page);
