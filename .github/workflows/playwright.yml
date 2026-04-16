@@ -12,6 +12,13 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.44.0-jammy
+    env:
+      BASE_URL: ${{ vars.BASE_URL }}
+      STANDARD_USER: ${{ vars.STANDARD_USER }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      CI: true
 
     strategy:
       matrix:
@@ -23,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
 
       - name: Setup Java (required for Allure)
@@ -43,11 +50,6 @@ jobs:
 
       - name: Run Playwright tests
         run: npx playwright test --project=${{ matrix.browser }}
-        env:
-          BASE_URL: ${{ secrets.BASE_URL || 'https://www.saucedemo.com' }}
-          STANDARD_USER: ${{ secrets.STANDARD_USER || 'standard_user' }}
-          PASSWORD: ${{ secrets.PASSWORD || 'secret_sauce' }}
-          CI: true
 
       - name: Generate Allure Report
         if: always()

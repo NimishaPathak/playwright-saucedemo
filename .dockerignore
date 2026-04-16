@@ -1,0 +1,14 @@
+node_modules
+playwright-report
+test-results
+allure-results
+allure-report
+.git
+.github
+.env
+Dockerfile
+docker-compose.yml
+jsconfig.json
+package-lock.json
+*.log
+.DS_Store
