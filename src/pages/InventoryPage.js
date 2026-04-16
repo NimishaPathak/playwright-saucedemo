@@ -37,7 +37,7 @@ export class InventoryPage extends BasePage {
     }
 
     getCartIcon() {
-        return this.getByRoleLocator('link', { name: /shopping cart/i });
+        return this.getByDataTest('shopping-cart-link');
     }
     getCartBadge() {
         return this.getByCss('.shopping_cart_badge');
@@ -59,7 +59,7 @@ export class InventoryPage extends BasePage {
         return this.getByDataTest(`remove-${slug}`);
     }
     getProductLinkByName(productName) {
-        return this.getByRoleLocator('link', { name: productName });
+        return this.getByRoleLocator('link', { name: productName }).first();
     }
 
     getBurgerMenuButton() {
