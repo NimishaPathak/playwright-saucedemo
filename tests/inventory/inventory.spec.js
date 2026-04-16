@@ -324,9 +324,7 @@ test.describe('🛒 Inventory Tests', () => {
             });
 
             await test.step('Verify logout link is no longer visible', async () => {
-                expect(
-                    await inventoryPage.isLocatorVisible(inventoryPage.getLogoutLink())
-                ).toBe(false);
+                await expect(inventoryPage.getLogoutLink()).toBeHidden();
             });
         });
 
