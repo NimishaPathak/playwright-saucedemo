@@ -1,6 +1,6 @@
 # Use the official Microsoft Playwright image as the base
 # The version here should match the version in package.json
-FROM mcr.microsoft.com/playwright:v1.44.0-jammy
+FROM mcr.microsoft.com/playwright:v1.59.1-jammy
 
 # Set the working directory inside the container
 WORKDIR /app
